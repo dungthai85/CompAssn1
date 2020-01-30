@@ -124,10 +124,11 @@ Sonic.prototype.update = function () {
 // inheritance 
 // https://ancientbeast.com/viewer/
 function Alien(game, spritesheet) {
-    this.animation = new Animation(spritesheet, 262, 262, 8, 0.02, 24, true, .5);
+    this.animationreverse = new Animation(spritesheet, 262, 262, 8, 0.02, 24, true, .5);
+    this.animation = new Animation(AM.getAsset("./img/alienreverse.png"), 262, 262, 8, 0.02, 24, true, .5);
     this.speed = -200;
     this.ctx = game.ctx;
-    Entity.call(this, game, 0, 536);
+    Entity.call(this, game, 1139, 536);
 }
 
 Alien.prototype = new Entity();
@@ -135,13 +136,28 @@ Alien.prototype.constructor = Alien;
 
 Alien.prototype.update = function () {
     this.x += this.game.clockTick * this.speed;
-    if (this.x < -60) this.x = 1139;
+    if (this.x < -70) {
+        //this.x = 1139;
+        this.speed = 200;
+        this.reverse = true;
+    }
+    if (this.x > 1139) {
+        //this.x = 1139;
+        this.speed = -200;
+        this.reverse = false;
+    }
     Entity.prototype.update.call(this);
 }
 
 Alien.prototype.draw = function () {
-    this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
-    Entity.prototype.draw.call(this);
+    if(this.reverse){
+        this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+        Entity.prototype.draw.call(this);
+    }
+    if(!this.reverse) {
+        this.animationreverse.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+        Entity.prototype.draw.call(this);
+    }
 }
 
 // inheritance 
@@ -190,14 +206,14 @@ Guitar.prototype.draw = function () {
 // }
 
 function Runner(game) {
-    this.animation = new Animation(AM.getAsset("./img/Runner.png"), 168, 216, 5, 0.05, 4, true, .75);
-    this.jumpAnimation = new Animation(AM.getAsset("./img/Jump.png"), 250, 250, 4, 0.05, 8, true, .5);
+    this.animation = new Animation(AM.getAsset("./img/Runner.png"), 168, 216, 5, 0.05, 4, true, .65);
+    this.jumpAnimation = new Animation(AM.getAsset("./img/Jump.png"), 250, 250, 4, 0.07, 8, true, .4);
     this.jumping = false;
     this.speed = 150;
     this.ctx = game.ctx;
     this.radius = 200;
-    this.ground = 490;
-    Entity.call(this, game, 0, 490);
+    this.ground = 510;
+    Entity.call(this, game, 0, 510);
 }
 
 Runner.prototype = new Entity();
@@ -220,17 +236,17 @@ Runner.prototype.update = function () {
            
     if (this.game.space && !this.jumping) {
         this.jumping = true;
-        this.jumpcount = 25;
+        this.jumpcount = 33;
     }
     if (this.jumping) {
-        this.speed = 500;
+        this.speed = 325;
         if (this.jumpAnimation.isDone() || this.jumpcount < 1) {
             this.jumpAnimation.elapsedTime = 0;
             this.jumping = false;
             this.speed = 150;
         }
         var jumpDistance = this.jumpAnimation.elapsedTime / this.jumpAnimation.totalTime;
-        var totalHeight = 200;
+        var totalHeight = 175;
 
         if (jumpDistance > 1)
             jumpDistance = 1 - jumpDistance;
@@ -280,6 +296,7 @@ Runner.prototype.draw = function (ctx) {
 AM.queueDownload("./img/Guitar.png");
 AM.queueDownload("./img/Sonic.png");
 AM.queueDownload("./img/alien.png");
+AM.queueDownload("./img/alienreverse.png");
 AM.queueDownload("./img/background.jpg");
 AM.queueDownload("./img/Runner.png");
 AM.queueDownload("./img/Jump.png");
