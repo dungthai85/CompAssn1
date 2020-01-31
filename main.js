@@ -207,7 +207,7 @@ Guitar.prototype.draw = function () {
 
 function Runner(game) {
     this.animation = new Animation(AM.getAsset("./img/Runner.png"), 168, 216, 5, 0.05, 4, true, .65);
-    this.jumpAnimation = new Animation(AM.getAsset("./img/Jump.png"), 250, 250, 4, 0.07, 8, true, .4);
+    this.jumpAnimation = new Animation(AM.getAsset("./img/Jump.png"), 250, 250, 4, 0.07, 8, false, .4);
     this.jumping = false;
     this.speed = 150;
     this.ctx = game.ctx;
@@ -240,7 +240,8 @@ Runner.prototype.update = function () {
     }
     if (this.jumping) {
         this.speed = 325;
-        if (this.jumpAnimation.isDone() || this.jumpcount < 1) {
+        if (this.jumpAnimation.isDone()) {
+           // || this.jumpcount < 1
             this.jumpAnimation.elapsedTime = 0;
             this.jumping = false;
             this.speed = 150;
